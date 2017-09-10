@@ -214,7 +214,7 @@
 		    	</video>
 			</div>
 			<div style="padding-top:15px;">
-				<input type="button" value="Capture" id="save" />	
+				<button style="margin-left:30px; color:black;" id="save" type="button" value="Authenticate" class="btn btn-warning">Authenticate</button>
 			</div>
 		</div>
 		<div class="col-md-7 text-block text-center" id="info-panel" style="margin-left: 75px; margin-top:40px; height: 450px; width:750px; background:rgba(194, 194, 214, 0.5); overflow-x:hidden; overflow-y:auto;">
@@ -222,14 +222,22 @@
 				<h1 id="notice" style="margin-top:175px; display:none;">Patient information will appear here once authorized</h1>
 
 				<div id="patient-info" style="margin-top:50px;">
-					<h2>Allergies</h2>
-					<ol id="allergies-list" style="list-style: none;">
-					
-					</ol>
 					<div>
-						<input type="button" class="btn btn-success" value="+" id="addAllergy" />
-					</div>	
+						<input type="button" class="btn btn-success" value="Save Changes" id="saveChanges" />
+					</div>
 					<br>
+					<h2>Allergies</h2>
+					<div class="text-center">
+						<table id="allergies-list" border="1" style="width: 100%">
+							<thead style='text-align:center' id="allerg-head"></thead>
+							<tbody id="allerg-body">
+
+							</tbody>
+						</table>
+					</div>
+					<div style="margin-top:5px;">
+						<input type="button" class="btn btn-secondary" value="+ Add new allergy" id="addAllergy" />
+					</div>	
 					<h2>Medications</h2>
 					<div class="text-center" >
 						<table id="medications-list" border="1" style="width: 100%">
@@ -239,9 +247,10 @@
 							</tbody>
 						</table>
 					</div>
-					<div>
-						<input type="button" class="btn btn-success" value="+" id="addMedication" />
+					<div style="margin-top:5px;">
+						<input type="button" class="btn btn-secondary" value="+ Add new medication" id="addMedication" />
 					</div>
+					<br>
 					<br>
 					<div>
 						<input type="button" class="btn btn-success" value="Save Changes" id="saveChanges" />
@@ -327,36 +336,7 @@
 			  			id = res._id;
 			  		});
 			  	});
-			  }, error: function(err) {
-			  	alert("Patient doesn't exist!");			  
-			  }
-			});
-		 }
-
-			document.getElementById('save').addEventListener('click',function(e){
-		    	if (paused) {
-		    		video.play();
-		    		document.getElementById("save").value = "Capture";
-		    		paused = false;
-		    	} else {
-		    		video.pause();
-		    		draw(v,context,w,h);
-		    		document.getElementById("save").value = "Try again";
-		    		paused = true;
-		    	}
-
-		    
-			});
-
-			document.getElementById("saveChanges").addEventListener('click', function(e) {
-				$.ajax({
-					url: "https://floating-harbor-59952.herokuapp.com/register",
-					type: "PUT",
-					dataType: "JSON",
-					data: {"id" : id, "test" : ["hello", "goodbye"]},
-					success: function(res) {
-						alert("success: " + res);
-						allergies = res.allergy;
+			  	allergies = res.allergy;
 						if (allergies.length > 0) {
 							for (var i = 0; i < allergies.length; i++) {
 								document.getElementById("allergies-list").innerHTML += "<li>" + allergies[i] + "</li>";
@@ -370,13 +350,48 @@
 								document.getElementById("meds-body").innerHTML += "<tr style='height:35px;'><td>" + medicines[i].tag + "</td><td>" + medicines[i].name + "</td><td>" + medicines[i].dose + "</td><td>" + medicines[i].last + "</td><td><button type='button' onclick='saveMed(this)' class='btn btn-primary'>Save</button></td></tr>";
 							}
 						}
+			  }, error: function(err) {
+			  	alert("Patient doesn't exist!");			  
+			  }
+			});
+		 }
+
+			document.getElementById('save').addEventListener('click',function(e){
+		    	if (paused) {
+		    		video.play();
+		    		document.getElementById("save").value = "Authenticate";
+		    		paused = false;
+		    	} else {
+		    		video.pause();
+		    		draw(v,context,w,h);
+		    		document.getElementById("save").value = "Try again";
+		    		paused = true;
+		    	}
+
+		    
+			});
+
+			document.getElementById("saveChanges").addEventListener('click', function(e) {
+
+				var allergiesForPut = [];
+				$("#allerg-body tr").each(function(){
+    				allergiesForPut.push($(this).find("td:first").text());
+				});
+				$.ajax({
+					url: "https://floating-harbor-59952.herokuapp.com/register",
+					type: "PUT",
+					dataType: "JSON",
+					data: {"id" : id, "test" : ["hello", "goodbye"]},
+					success: function(res) {
+						alert("success: " + res);
+						
 					}, error: function(err) {
 						alert("error " + err);
 					}
 				})
 			})
 			document.getElementById("addAllergy").addEventListener('click', function(e) {
-				document.getElementById("allergies-list").innerHTML += "<li style='margin-right:35px'><input style='width='50px;' type='text'></li><br>"
+				document.getElementById("allerg-body").innerHTML += "<tr><td><input style='width:400px;' placeholder='Enter allergy here...' type='text'></td><td><button type='button' onclick='saveAllerg(this)' class='btn btn-primary'>Save</button></td></tr>"
 			});
 
 			document.getElementById("addMedication").addEventListener('click', function(e) {
@@ -388,7 +403,7 @@
 			})
 
 			function saveMed(c) {
-				var row = c.parentNode.parentNode.rowIndex
+				var row = c.parentNode.parentNode.rowIndex;
 				console.log("Medications row " + c.parentNode.parentNode.rowIndex);
 				var cells = document.getElementById('meds-body').getElementsByTagName('td');
 				if (cells[(row - 1) * 5].childNodes[0].value != undefined && cells[(row - 1) * 5].childNodes[0].value.trim().length > 0) {cells[(row - 1) * 5].innerHTML = '<p style="cursor:pointer;" onClick="editMedRow(this.parentNode);">' + cells[(row - 1) * 5].childNodes[0].value + '</p>';}
@@ -397,7 +412,18 @@
 				if (cells[(row - 1) * 5 + 3].childNodes[0].value != undefined && cells[(row - 1) * 5 + 3].childNodes[0].value.trim().length > 0) {cells[(row - 1) * 5 + 3].innerHTML = '<p style="cursor:pointer;" onClick="editMedRow(this.parentNode);">' + cells[(row - 1) * 5 + 3].childNodes[0].value + '</p>';}
 			}
 
+			function saveAllerg(c) {
+				var row2 = c.parentNode.parentNode.rowIndex;
+				console.log("Allergies row " + c.parentNode.parentNode.rowIndex);
+				var cells2 = document.getElementById('allerg-body').getElementsByTagName('td');
+				if (cells2[row2 * 2].childNodes[0].value != undefined && cells2[row2 * 2].childNodes[0].value.trim().length > 0) {cells2[row2 * 2].innerHTML = '<p style="cursor:pointer;" onClick="editAllergRow(this.parentNode);">' + cells2[row2 * 2].childNodes[0].value + '</p>';}
+			}
+
 			function editMedRow(c) {
+				c.innerHTML = "<input type='text' value='" + c.childNodes[0].innerHTML + "'>";
+			}
+
+			function editAllergRow(c) {
 				c.innerHTML = "<input type='text' value='" + c.childNodes[0].innerHTML + "'>";
 			}
 			</script>
