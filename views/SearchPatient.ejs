@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+		<style>
+			#container {
+			    margin: 0px auto;
+			    width: 600x;
+			    height: 400px;
+			    border: 10px #333 solid;
+			}
+			#videoElement {
+			    width: 600px;
+			    height: 400x;
+			    background-color: #666;
+			}
+			#canvas {
+			    width: 200px;
+			    height: 120px;
+			    background-color: #CCC;
+			}
+
+			#info-panel::-webkit-scrollbar {
+			    width: 1.2em;
+			}
+
+			#info-panel::-webkit-scrollbar-track {
+			    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+			}
+
+			#info-panel::-webkit-scrollbar-thumb {
+			  background-color: black;
+			  outline: 1px solid slategrey;
+			}
+			body{
+	margin:0;
+	padding:0;
+	font-family:"arial",heletica,sans-serif;
+	font-size:12px;
+    background: #2980b9 url('https://static.tumblr.com/03fbbc566b081016810402488936fbae/pqpk3dn/MRSmlzpj3/tumblr_static_bg3.png') repeat 0 0;
+	-webkit-animation: 10s linear 0s normal none infinite animate;
+	-moz-animation: 10s linear 0s normal none infinite animate;
+	-ms-animation: 10s linear 0s normal none infinite animate;
+	-o-animation: 10s linear 0s normal none infinite animate;
+	animation: 10s linear 0s normal none infinite animate;
+ 
+}
+ 
+@-webkit-keyframes animate {
+	from {background-position:0 0;}
+	to {background-position: 500px 0;}
+}
+ 
+@-moz-keyframes animate {
+	from {background-position:0 0;}
+	to {background-position: 500px 0;}
+}
+ 
+@-ms-keyframes animate {
+	from {background-position:0 0;}
+	to {background-position: 500px 0;}
+}
+ 
+@-o-keyframes animate {
+	from {background-position:0 0;}
+	to {background-position: 500px 0;}
+}
+ 
+@keyframes animate {
+	from {background-position:0 0;}
+	to {background-position: 500px 0;}
+}
+
+#login-dp{
+    min-width: 250px;
+    padding: 14px 14px 0;
+    overflow:hidden;
+    background-color:rgba(255,255,255,.8);
+}
+#login-dp .help-block{
+    font-size:12px    
+}
+#login-dp .bottom{
+    background-color:rgba(255,255,255,.8);
+    border-top:1px solid #ddd;
+    clear:both;
+    padding:14px;
+}
+#login-dp .social-buttons{
+    margin:12px 0    
+}
+#login-dp .social-buttons a{
+    width: 49%;
+}
+#login-dp .form-group {
+    margin-bottom: 10px;
+}
+.btn-fb{
+    color: #fff;
+    background-color:#3b5998;
+}
+.btn-fb:hover{
+    color: #fff;
+    background-color:#496ebc 
+}
+.btn-tw{
+    color: #fff;
+    background-color:#55acee;
+}
+.btn-tw:hover{
+    color: #fff;
+    background-color:#59b5fa;
+}
+@media(max-width:768px){
+    #login-dp{
+        background-color: inherit;
+        color: #fff;
+    }
+    #login-dp .bottom{
+        background-color: inherit;
+        border-top:0 none;
+    }
+}
+
+		</style>
+	</head>
+
+
+	<body>	
+	<nav class="navbar navbar-default navbar-inverse" role="navigation">
+	  <div class="container-fluid">
+	    <div class="navbar-header">
+	      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+	        <span class="sr-only">Toggle navigation</span>
+	        <span class="icon-bar"></span>
+	        <span class="icon-bar"></span>
+	        <span class="icon-bar"></span>
+	      </button>
+	      <a class="navbar-brand" href="#">CareGivr</a>
+	    </div>
+
+	    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+	      <ul class="nav navbar-nav">
+	        <li class="active"><a href="/search_patient">Search Patients</a></li>
+	        <li><a href="/new_patient">New Patient</a></li>
+	        <li class="dropdown">
+	          <a href="#" class="dropdown-toggle" data-toggle="dropdown">About <span class="caret"></span></a>
+	          <ul class="dropdown-menu" role="menu">
+	            <li><a href="#">Action</a></li>
+	            <li><a href="#">Another action</a></li>
+	            <li><a href="#">Something else here</a></li>
+	            <li class="divider"></li>
+	            <li><a href="#">Separated link</a></li>
+	            <li class="divider"></li>
+	            <li><a href="#">One more separated link</a></li>
+	          </ul>
+	        </li>
+	      </ul>
+	      <ul class="nav navbar-nav navbar-right">
+	        <li><p class="navbar-text">Already have an account?</p></li>
+	        <li class="dropdown">
+	          <a href="#" class="dropdown-toggle" data-toggle="dropdown"><b>Login</b> <span class="caret"></span></a>
+				<ul id="login-dp" class="dropdown-menu">
+					<li>
+						 <div class="row">
+								<div class="col-md-12">
+									Login via
+									<div class="social-buttons">
+										<a href="#" class="btn btn-fb"><i class="fa fa-facebook"></i> Facebook</a>
+										<a href="#" class="btn btn-tw"><i class="fa fa-twitter"></i> Twitter</a>
+									</div>
+	                                or
+									 <form class="form" role="form" method="post" action="login" accept-charset="UTF-8" id="login-nav">
+											<div class="form-group">
+												 <label class="sr-only" for="exampleInputEmail2">Email address</label>
+												 <input type="email" class="form-control" id="exampleInputEmail2" placeholder="Email address" required>
+											</div>
+											<div class="form-group">
+												 <label class="sr-only" for="exampleInputPassword2">Password</label>
+												 <input type="password" class="form-control" id="exampleInputPassword2" placeholder="Password" required>
+	                                             <div class="help-block text-right"><a href="">Forget the password ?</a></div>
+											</div>
+											<div class="form-group">
+												 <button type="submit" class="btn btn-primary btn-block">Sign in</button>
+											</div>
+											<div class="checkbox">
+												 <label>
+												 <input type="checkbox"> keep me logged-in
+												 </label>
+											</div>
+									 </form>
+								</div>
+								<div class="bottom text-center">
+									New here ? <a href="#"><b>Join Us</b></a>
+								</div>
+						 </div>
+					</li>
+				</ul>
+	        </li>
+	      </ul>
+	    </div>
+	  </div>
+	</nav>
+	<div class="col-md-8 col-md-offset-2 text-block text-center" style="color:white;">
+			<h1>Search for a Patient</h1>
+		</div>
+	<div class="row">
+		<div class="col-md-5 text-block text-center" style="padding-left:65px;">
+			<div id="videoDiv" style="height:500px; padding-top:40px;">
+		    	<video autoplay id="videoElement">
+		    	</video>
+			</div>
+			<div style="padding-top:15px;">
+				<input type="button" value="Capture" id="save" />	
+			</div>
+		</div>
+		<div class="col-md-7 text-block text-center" id="info-panel" style="margin-left: 75px; margin-top:40px; height: 450px; width:750px; background:rgba(194, 194, 214, 0.5); overflow-x:hidden; overflow-y:auto;">
+			<div class="text-center" >
+				<h1 id="notice" style="margin-top:175px; display:none;">Patient information will appear here once authorized</h1>
+
+				<div id="patient-info" style="margin-top:50px;">
+					<h2>Allergies</h2>
+					<ol id="allergies-list" style="list-style: none;">
+					
+					</ol>
+					<div>
+						<input type="button" class="btn btn-success" value="+" id="addAllergy" />
+					</div>	
+					<br>
+					<h2>Medications</h2>
+					<div class="text-center" >
+						<table id="medications-list" border="1" style="width: 100%">
+							<thead style='text-align:center' id="meds-head"></thead>
+							<tbody id="meds-body">
+
+							</tbody>
+						</table>
+					</div>
+					<div>
+						<input type="button" class="btn btn-success" value="+" id="addMedication" />
+					</div>
+					<br>
+					<div>
+						<input type="button" class="btn btn-success" value="Save Changes" id="saveChanges" />
+					</div>
+	
+		
+				</div>
+			</div>
+		</div>
+		<div class="col-md-8 col-md-offset-2 text-block text-center" style="display:none; padding-top:20px;">
+			<canvas id="canvas" width="500" height="375"></canvas>
+		</div>
+	</div>
+
+	<script>
+
+		var video = document.querySelector("#videoElement");
+
+		// check for getUserMedia support
+		navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia || navigator.oGetUserMedia;
+		 
+		if (navigator.getUserMedia) {       
+		    // get webcam feed if available
+		    navigator.getUserMedia({video: true}, handleVideo, videoError);
+		}
+
+		var patientInfo;
+		var id;
+		 
+		function handleVideo(stream) {
+		    // if found attach feed to video element
+		    video.src = window.URL.createObjectURL(stream);
+		}
+		 
+		function videoError(e) {
+		    // no webcam found - do something
+		}
+		var v,canvas,context,w,h;
+		var imgtag = document.getElementById('imgtag'); // get reference to img tag
+		var sel = document.getElementById('fileselect'); // get reference to file select input element
+		var paused = false;
+
+		var medsHeader = false;
+		var allergHeader = false;
+
+		var medRowsAreEditable = [];
+		var allergRowsAreEditable = [];
+
+		var allergies;
+		var medicines;
+
+		document.addEventListener('DOMContentLoaded', function(){
+		    // when DOM loaded, get canvas 2D context and store width and height of element
+		    v = document.getElementById('videoElement');
+		    canvas = document.getElementById('canvas');
+		    context = canvas.getContext('2d');
+		    context.scale(0.25, 0.25);
+
+		    w = canvas.width;
+		    h = canvas.height;
+
+		},false);
+
+		function draw(v,c,w,h) {
+
+		   if (v.ended) return false; // if no video, exit here
+
+		   context.drawImage(v,0,0,w,h); // draw video feed to canvas
+		   
+		   uri = canvas.toDataURL("image/png").split("base64,")[1].trim(); // convert canvas to data URI
+		   //document.getElementById("FaceID").input = uri;
+		   console.log(uri); // uncomment line to log URI for testing
+
+		   $.ajax({
+			  url: "https://floating-harbor-59952.herokuapp.com/register",
+			  type: "POST",
+			  dataType: "JSON",
+			  data: {"image" : uri},
+			  success: function(res) {
+			  	patientInfo = res;
+			  	$("#notice").fadeOut(function() {
+			  		$("#patient-info").fadeIn(function() {
+			  			id = res._id;
+			  		});
+			  	});
+			  }, error: function(err) {
+			  	alert("Patient doesn't exist!");			  
+			  }
+			});
+		 }
+
+			document.getElementById('save').addEventListener('click',function(e){
+		    	if (paused) {
+		    		video.play();
+		    		document.getElementById("save").value = "Capture";
+		    		paused = false;
+		    	} else {
+		    		video.pause();
+		    		draw(v,context,w,h);
+		    		document.getElementById("save").value = "Try again";
+		    		paused = true;
+		    	}
+
+		    
+			});
+
+			document.getElementById("saveChanges").addEventListener('click', function(e) {
+				$.ajax({
+					url: "https://floating-harbor-59952.herokuapp.com/register",
+					type: "PUT",
+					dataType: "JSON",
+					data: {"id" : id, "test" : ["hello", "goodbye"]},
+					success: function(res) {
+						alert("success: " + res);
+						allergies = res.allergy;
+						if (allergies.length > 0) {
+							for (var i = 0; i < allergies.length; i++) {
+								document.getElementById("allergies-list").innerHTML += "<li>" + allergies[i] + "</li>";
+							}
+						}
+						medicines = res.medicine;
+						if (medicines.length > 0) {
+							document.getElementById("meds-head").innerHTML += "<tr><th width='20%' style='font-size:20px;'>Tag</th><th width='20%' style='font-size:20px;'>Name</th><th width='20%' style='font-size:20px;'>Dosage</th><th width='20%' style='font-size:20px;'>Last Taken</th><th width='20%' style='font-size:20px;'></th></tr>";
+							medsHeader = true;
+							for (var i = 0; i < medicines.length; i++) {
+								document.getElementById("meds-body").innerHTML += "<tr style='height:35px;'><td>" + medicines[i].tag + "</td><td>" + medicines[i].name + "</td><td>" + medicines[i].dose + "</td><td>" + medicines[i].last + "</td><td><button type='button' onclick='saveMed(this)' class='btn btn-primary'>Save</button></td></tr>";
+							}
+						}
+					}, error: function(err) {
+						alert("error " + err);
+					}
+				})
+			})
+			document.getElementById("addAllergy").addEventListener('click', function(e) {
+				document.getElementById("allergies-list").innerHTML += "<li style='margin-right:35px'><input style='width='50px;' type='text'></li><br>"
+			});
+
+			document.getElementById("addMedication").addEventListener('click', function(e) {
+				if (medsHeader == false) {
+					document.getElementById("meds-head").innerHTML += "<tr><th width='20%' style='font-size:20px;'>Tag</th><th width='20%' style='font-size:20px;'>Name</th><th width='20%' style='font-size:20px;'>Dosage</th><th width='20%' style='font-size:20px;'>Last Taken</th><th width='20%' style='font-size:20px;'></th></tr>";
+					medsHeader = true;
+				}
+				document.getElementById("meds-body").innerHTML += "<tr style='height:35px;'><td><input type='text' name='med-tag' id='med-tag'></td><td><input type='text' name='med-name' id='text'></td><td><input type='text' name='med-dose' id='med-dose'></td><td><input type='text' name='med-last' id='med-last'></td><td><button type='button' onclick='saveMed(this)' class='btn btn-primary'>Save</button></td></tr>"
+			})
+
+			function saveMed(c) {
+				var row = c.parentNode.parentNode.rowIndex
+				console.log("Medications row " + c.parentNode.parentNode.rowIndex);
+				var cells = document.getElementById('meds-body').getElementsByTagName('td');
+				if (cells[(row - 1) * 5].childNodes[0].value != undefined && cells[(row - 1) * 5].childNodes[0].value.trim().length > 0) {cells[(row - 1) * 5].innerHTML = '<p style="cursor:pointer;" onClick="editMedRow(this.parentNode);">' + cells[(row - 1) * 5].childNodes[0].value + '</p>';}
+				if (cells[(row - 1) * 5 + 1].childNodes[0].value !=  undefined && cells[(row - 1) * 5 + 1].childNodes[0].value.trim().length > 0) {cells[(row - 1) * 5 + 1].innerHTML = '<p style="cursor:pointer;" onClick="editMedRow(this.parentNode);">' + cells[(row - 1) * 5 + 1].childNodes[0].value + '</p>';}
+				if (cells[(row - 1) * 5 + 2].childNodes[0].value != undefined && cells[(row - 1) * 5 + 2].childNodes[0].value.trim().length > 0) {cells[(row - 1) * 5 + 2].innerHTML = '<p style="cursor:pointer;" onClick="editMedRow(this.parentNode);">' + cells[(row - 1) * 5 + 2].childNodes[0].value + '</p>';}
+				if (cells[(row - 1) * 5 + 3].childNodes[0].value != undefined && cells[(row - 1) * 5 + 3].childNodes[0].value.trim().length > 0) {cells[(row - 1) * 5 + 3].innerHTML = '<p style="cursor:pointer;" onClick="editMedRow(this.parentNode);">' + cells[(row - 1) * 5 + 3].childNodes[0].value + '</p>';}
+			}
+
+			function editMedRow(c) {
+				c.innerHTML = "<input type='text' value='" + c.childNodes[0].innerHTML + "'>";
+			}
+			</script>
+
+
+	
+	</body>
+
+
+</html>
+
